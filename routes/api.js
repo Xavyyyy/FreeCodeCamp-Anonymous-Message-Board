@@ -58,17 +58,21 @@ module.exports = function (app) {
               created_on,
               bumped_on,
               reported,
-              delete_password,
               replies,
+              // delete_password, // do NOT include this
             } = thread;
+            // Remove delete_password from replies too
+            const safeReplies = replies.map((r) => {
+              const { _id, text, created_on, bumped_on, reported } = r;
+              return { _id, text, created_on, bumped_on, reported };
+            });
             return {
               _id,
               text,
               created_on,
               bumped_on,
               reported,
-              delete_password,
-              replies,
+              replies: safeReplies,
               replycount: thread.replies.length,
             };
           });
@@ -193,7 +197,7 @@ module.exports = function (app) {
         reply.reported = true;
         reply.bumped_on = new Date();
         await data.save();
-        res.send("Success");
+        res.send("reported");
       } catch (err) {
         console.log(err);
         res.send("There was an error reporting the reply");
