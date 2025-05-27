@@ -55,7 +55,7 @@ suite("Functional Tests", function () {
         .send({ thread_id: testThread_id, delete_password: "incorrect" })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.text, "Incorrect Password");
+          assert.equal(res.text, "incorrect password");
           done();
         });
     });
@@ -124,11 +124,11 @@ suite("Functional Tests", function () {
         .send({
           thread_id: testThread_id,
           reply_id: testReply_id,
-          delete_password: "Incorrect",
+          delete_password: "incorrect",
         })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.text, "Incorrect Password");
+          assert.equal(res.text, "incorrect password");
           done();
         });
     });

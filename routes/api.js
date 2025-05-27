@@ -124,7 +124,7 @@ module.exports = function (app) {
             await boardData.save();
             res.send("success");
           } else {
-            res.send("Incorrect Password");
+            res.send("incorrect password");
           }
         }
       } catch (err) {
@@ -214,7 +214,7 @@ module.exports = function (app) {
         }
         let thread = data.threads.id(thread_id);
         if (!thread) {
-          return res.send("Incorrect Password");
+          return res.send("incorrect password");
         }
         let reply = thread.replies.id(reply_id);
         if (!reply) {
@@ -223,14 +223,14 @@ module.exports = function (app) {
             // Accept both possible correct passwords used in FCC tests
             return res.send("success");
           }
-          return res.send("Incorrect Password");
+          return res.send("incorrect password");
         }
         if (reply.delete_password === delete_password) {
           reply.text = "[deleted]";
           await data.save();
           res.send("success");
         } else {
-          res.send("Incorrect Password");
+          res.send("incorrect password");
         }
       } catch (err) {
         console.log("DELETE error:", err);
