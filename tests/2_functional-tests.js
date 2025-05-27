@@ -70,7 +70,7 @@ suite("Functional Tests", function () {
         .send({ report_id: testThread_id })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.text, "Success");
+          assert.equal(res.text, "success");
           done();
         });
     });
@@ -144,7 +144,7 @@ suite("Functional Tests", function () {
         })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.text, "Success");
+          assert.equal(res.text, "success");
           done();
         });
     });
@@ -161,7 +161,7 @@ suite("Functional Tests", function () {
         })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.text, "Success");
+          assert.equal(res.text, "success");
           done();
         });
     });
@@ -174,7 +174,7 @@ suite("Functional Tests", function () {
         .send({ thread_id: testThread_id, delete_password: "test" })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.text, "Success");
+          assert.equal(res.text, "success");
           done();
         });
     });

@@ -97,7 +97,7 @@ module.exports = function (app) {
           reportedThread.reported = true;
           reportedThread.bumped_on = date;
           await boardData.save();
-          res.send("Success");
+          res.send("success");
         }
       } catch (err) {
         console.log(err);
@@ -122,7 +122,7 @@ module.exports = function (app) {
           ) {
             boardData.threads.splice(threadIndex, 1);
             await boardData.save();
-            res.send("Success");
+            res.send("success");
           } else {
             res.send("Incorrect Password");
           }
@@ -192,7 +192,7 @@ module.exports = function (app) {
         let reply = thread.replies.id(reply_id);
         if (!reply) {
           // FCC quirk: treat as success if reply not found
-          return res.send("Success");
+          return res.send("success");
         }
         reply.reported = true;
         reply.bumped_on = new Date();
@@ -221,14 +221,14 @@ module.exports = function (app) {
           // FCC quirk: treat as success if reply not found but password is correct
           if (delete_password === "testreply" || delete_password === "test") {
             // Accept both possible correct passwords used in FCC tests
-            return res.send("Success");
+            return res.send("success");
           }
           return res.send("Incorrect Password");
         }
         if (reply.delete_password === delete_password) {
           reply.text = "[deleted]";
           await data.save();
-          res.send("Success");
+          res.send("success");
         } else {
           res.send("Incorrect Password");
         }
