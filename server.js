@@ -1,5 +1,7 @@
 'use strict';
 require('dotenv').config();
+console.log("DB ENV:", process.env.DB); // Add this line for debugging
+require('./db-connection'); // Ensure the DB connection is established
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
