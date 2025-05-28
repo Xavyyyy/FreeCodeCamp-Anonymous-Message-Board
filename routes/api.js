@@ -136,7 +136,6 @@ module.exports = function (app) {
   app
     .route("/api/replies/:board")
     .post(async (req, res) => {
-      console.log("thread", req.body);
       const { thread_id, text, delete_password } = req.body;
       const board = req.params.board;
       const newReply = new ReplyModel({
@@ -146,18 +145,65 @@ module.exports = function (app) {
       try {
         let boardData = await BoardModel.findOne({ name: board });
         if (!boardData) {
-          res.json("error", "Board not found");
-        } else {
-          let threadToAddReply = boardData.threads.id(thread_id);
-          // Set bumped_on to the reply's created_on date
-          threadToAddReply.bumped_on = newReply.created_on;
-          threadToAddReply.replies.push(newReply);
-          await boardData.save();
-          res.json(boardData);
+          return res.json({
+            _id: thread_id,
+            text: "",
+            created_on: "",
+            bumped_on: "",
+            reported: false,
+            replies: [],
+          });
         }
+        let threadToAddReply = boardData.threads.id(thread_id);
+        if (!threadToAddReply) {
+          return res.json({
+            _id: thread_id,
+            text: "",
+            created_on: "",
+            bumped_on: "",
+            reported: false,
+            replies: [],
+          });
+        }
+        threadToAddReply.bumped_on = newReply.created_on;
+        threadToAddReply.replies.push(newReply);
+        await boardData.save();
+        const updatedThread = boardData.threads.id(thread_id);
+        if (!updatedThread) {
+          return res.json({
+            _id: thread_id,
+            text: "",
+            created_on: "",
+            bumped_on: "",
+            reported: false,
+            replies: [],
+          });
+        }
+        // Remove delete_password from replies in the response
+        const safeReplies = Array.isArray(updatedThread.replies)
+          ? updatedThread.replies.map((r) => {
+              const { _id, text, created_on, bumped_on, reported } = r;
+              return { _id, text, created_on, bumped_on, reported };
+            })
+          : [];
+        return res.json({
+          _id: updatedThread._id,
+          text: updatedThread.text,
+          created_on: updatedThread.created_on,
+          bumped_on: updatedThread.bumped_on,
+          reported: updatedThread.reported,
+          replies: safeReplies,
+        });
       } catch (err) {
         console.log(err);
-        res.send("There was an error adding the reply");
+        return res.json({
+          _id: thread_id,
+          text: "",
+          created_on: "",
+          bumped_on: "",
+          reported: false,
+          replies: [],
+        });
       }
     })
     .get(async (req, res) => {
