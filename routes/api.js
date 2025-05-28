@@ -91,6 +91,9 @@ module.exports = function (app) {
         } else {
           const date = new Date();
           let reportedThread = boardData.threads.id(report_id);
+          if (!reportedThread) {
+            return res.send("There was an error updating the thread");
+          }
           reportedThread.reported = true;
           reportedThread.bumped_on = date;
           await boardData.save();
