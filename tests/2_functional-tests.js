@@ -87,7 +87,9 @@ suite("Functional Tests", function () {
         .end(function (err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.body.replies[0].text, "test reply");
-          testReply_id = res.body.replies[0]._id;
+          const lastReply = res.body.replies[res.body.replies.length - 1];
+          assert.equal(lastReply.text, "test reply");
+          testReply_id = lastReply._id;
           done();
         });
     });
