@@ -197,7 +197,7 @@ module.exports = function (app) {
         reply.reported = true;
         reply.bumped_on = new Date();
         await data.save();
-        res.send("reported");
+        res.send("success");
       } catch (err) {
         console.log(err);
         res.send("There was an error reporting the reply");
