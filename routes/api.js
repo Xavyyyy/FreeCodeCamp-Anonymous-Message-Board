@@ -209,12 +209,25 @@ module.exports = function (app) {
         let data = await BoardModel.findOne({ name: board });
         if (!data) {
           console.log("No board with this name");
-          res.json({ error: "No board with this name" });
-        } else {
-          console.log("data", data);
-          const thread = data.threads.id(req.query.thread_id);
-          res.json(thread);
+          return res.json({ error: "No board with this name" });
         }
+        const thread = data.threads.id(req.query.thread_id);
+        if (!thread) {
+          return res.json({ error: "Thread not found" });
+        }
+        // Remove delete_password and reported from replies
+        const safeReplies = thread.replies.map((r) => {
+          const { _id, text, created_on, bumped_on } = r;
+          return { _id, text, created_on, bumped_on };
+        });
+        // Remove delete_password and reported from thread
+        return res.json({
+          _id: thread._id,
+          text: thread.text,
+          created_on: thread.created_on,
+          bumped_on: thread.bumped_on,
+          replies: safeReplies,
+        });
       } catch (err) {
         console.log(err);
         res.send("There was an error fetching the replies");
