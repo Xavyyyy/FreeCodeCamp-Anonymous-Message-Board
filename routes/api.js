@@ -50,32 +50,29 @@ module.exports = function (app) {
           console.log("No board with this name");
           res.json({ error: "No board with this name" });
         } else {
-          console.log("data", data);
-          const threads = data.threads.map((thread) => {
-            const {
-              _id,
-              text,
-              created_on,
-              bumped_on,
-              reported,
-              replies,
-              // delete_password, // do NOT include this
-            } = thread;
-            // Remove delete_password from replies too
-            const safeReplies = replies.map((r) => {
-              const { _id, text, created_on, bumped_on, reported } = r;
-              return { _id, text, created_on, bumped_on, reported };
+          // Only the 10 most recent threads, each with only the 3 most recent replies
+          const threads = data.threads
+            .sort((a, b) => b.bumped_on - a.bumped_on)
+            .slice(0, 10)
+            .map((thread) => {
+              // Only the 3 most recent replies
+              const safeReplies = thread.replies
+                .sort((a, b) => b.created_on - a.created_on)
+                .slice(0, 3)
+                .map((r) => {
+                  const { _id, text, created_on, bumped_on } = r;
+                  return { _id, text, created_on, bumped_on };
+                });
+              // Do NOT include reported or delete_password
+              return {
+                _id: thread._id,
+                text: thread.text,
+                created_on: thread.created_on,
+                bumped_on: thread.bumped_on,
+                replies: safeReplies,
+                replycount: thread.replies.length,
+              };
             });
-            return {
-              _id,
-              text,
-              created_on,
-              bumped_on,
-              reported,
-              replies: safeReplies,
-              replycount: thread.replies.length,
-            };
-          });
           res.json(threads);
         }
       } catch (err) {
