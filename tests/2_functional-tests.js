@@ -70,7 +70,7 @@ suite("Functional Tests", function () {
         .send({ report_id: testThread_id })
         .end(function (err, res) {
           assert.equal(res.status, 200);
-          assert.equal(res.text, "success");
+          assert.equal(res.text, "reported");
           done();
         });
     });

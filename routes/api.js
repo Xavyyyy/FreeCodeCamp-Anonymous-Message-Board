@@ -94,7 +94,7 @@ module.exports = function (app) {
           reportedThread.reported = true;
           reportedThread.bumped_on = date;
           await boardData.save();
-          res.send("success");
+          res.send("reported");
         }
       } catch (err) {
         console.log(err);
