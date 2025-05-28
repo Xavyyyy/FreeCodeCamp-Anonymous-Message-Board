@@ -148,9 +148,9 @@ module.exports = function (app) {
         if (!boardData) {
           res.json("error", "Board not found");
         } else {
-          const date = new Date();
           let threadToAddReply = boardData.threads.id(thread_id);
-          threadToAddReply.bumped_on = date;
+          // Set bumped_on to the reply's created_on date
+          threadToAddReply.bumped_on = newReply.created_on;
           threadToAddReply.replies.push(newReply);
           await boardData.save();
           res.json(boardData);
