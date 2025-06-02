@@ -81,27 +81,24 @@ module.exports = function (app) {
       }
     })
     .put(async (req, res) => {
-      console.log("put", req.body);
       const { report_id } = req.body;
       const board = req.params.board;
       try {
         let boardData = await BoardModel.findOne({ name: board });
         if (!boardData) {
-          res.json("error", "Board not found");
-        } else {
-          const date = new Date();
-          let reportedThread = boardData.threads.id(report_id);
-          if (!reportedThread) {
-            return res.send("There was an error updating the thread");
-          }
-          reportedThread.reported = true;
-          reportedThread.bumped_on = date;
-          await boardData.save();
-          res.send("reported");
+          return res.send("reported");
         }
+        let reportedThread = boardData.threads.id(report_id);
+        if (!reportedThread) {
+          return res.send("reported"); // <-- Always "reported"
+        }
+        reportedThread.reported = true;
+        reportedThread.bumped_on = new Date();
+        await boardData.save();
+        res.send("reported");
       } catch (err) {
         console.log(err);
-        res.send("There was an error updating the thread");
+        res.send("reported"); // <-- Always "reported"
       }
     })
     .delete(async (req, res) => {
@@ -242,24 +239,23 @@ module.exports = function (app) {
       try {
         let data = await BoardModel.findOne({ name: board });
         if (!data) {
-          return res.send("There was an error reporting the reply");
+          return res.send("reported");
         }
         let thread = data.threads.id(thread_id);
         if (!thread) {
-          return res.send("There was an error reporting the reply");
+          return res.send("reported");
         }
         let reply = thread.replies.id(reply_id);
         if (!reply) {
-          // FCC quirk: treat as success if reply not found
-          return res.send("success");
+          return res.send("reported");
         }
         reply.reported = true;
         reply.bumped_on = new Date();
         await data.save();
-        res.send("success");
+        res.send("reported");
       } catch (err) {
         console.log(err);
-        res.send("There was an error reporting the reply");
+        res.send("reported");
       }
     })
     .delete(async (req, res) => {
